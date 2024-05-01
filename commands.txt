@@ -1,0 +1,100 @@
+docker build -t tag-name .
+docker run -it ubuntu
+docker run <tag-name/img-name>
+docker run -d <tag-name/img-name> //detached 
+
+docker run -p srcport:dockerport tag-name // expose port
+docker run -p 8080:80 tag-name // expose port 80 on container to localhost:8080
+
+# Basic Docker Commands
+
+# Show Docker version and info
+docker version           # Show the Docker version information
+docker info              # Display system-wide information
+
+# Working with Docker Images
+
+docker pull <image>      # Download an image or a repository from a registry
+docker push <image>      # Push an image or a repository to a registry
+
+docker build -t <tag> .  # Build an image from a Dockerfile in the current directory
+                         # -t tags the image with a name
+
+docker images            # List all local images
+docker rmi <image>       # Remove one or more specific images
+docker history <image>   # Show the history of an image
+
+# Running Containers
+
+docker run <image>       # Create a new container and start it
+                         # Common options:
+                         # -d: detached mode: run container in the background
+                         # -p: port mapping: -p host_port:container_port
+                         # -v: volume mount: -v host_dir:container_dir
+                         # --name: name your container
+
+docker ps                # List running containers
+docker ps -a             # List all containers, even those not running
+
+docker stop <container>  # Stop a running container
+docker start <container> # Start a stopped container
+docker restart <container> # Restart a container
+
+docker rm <container>    # Remove one or more containers
+                         # Use -f to force the removal of a running container
+
+docker exec -it <container> <command> # Execute a command inside a running container
+                                      # -it allows you to interact with the container
+
+docker logs <container>  # Fetch the logs of a container
+                         # Use -f to follow the log output
+
+# Docker Networking
+
+docker network ls        # List networks
+docker network create <name> # Create a network
+docker network rm <name> # Remove one or more networks
+
+docker run -p 5000:5000 --network=<name> <image> # Run a container with network settings
+
+# Docker Volumes
+
+docker volume ls         # List all volumes
+docker volume create <name> # Create a volume
+docker volume rm <name>  # Remove one or more volumes
+
+docker run -v <volume_name>:<path_in_container> <image> # Run container with volume
+
+# Docker Compose (for multi-container environments)
+
+docker-compose up        # Start up all containers in a docker-compose file
+                         # -d to run in detached mode
+docker-compose down      # Stop and remove resources created by up
+
+docker-compose logs      # View output from containers
+docker-compose ps        # List containers
+
+# Miscellaneous
+
+docker stats             # Display a live stream of container(s) resource usage statistics
+docker save <image> > <path> # Save one or more images to a tar archive (stdout)
+docker load < <path>     # Load an image from a tar archive as STDIN
+
+docker system prune      # Remove unused data
+                         # Use -a to remove all unused images not just dangling ones
+
+# Dockerfile Instructions Overview (Key instructions used in Dockerfiles)
+
+# FROM: Set the base image for subsequent instructions
+# RUN: Execute commands in a new layer on top of the current image and commit the results
+# CMD: Provide defaults for an executing container
+# LABEL: Add metadata to an image
+# EXPOSE: Inform Docker that the container listens on the specified network ports at runtime
+# ENV: Set environment variables
+# ADD: Copy files, directories, or remote file URLs from source to the filesystem of the container
+# COPY: Copy new files or directories into the Docker container
+# ENTRYPOINT: Configure a container that will run as an executable
+# VOLUME: Create a mount point with the specified name and mark it as holding externally mounted volumes
+# USER: Set the user name (or UID) to use when running the image and for any RUN, CMD, and ENTRYPOINT instructions that follow it
+# WORKDIR: Set the working directory for any RUN, CMD, ENTRYPOINT, COPY, and ADD instructions that follow it
+# ARG: Define a variable that users can pass at build-time to the builder with the docker build command

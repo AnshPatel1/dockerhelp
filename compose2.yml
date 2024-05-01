@@ -1,0 +1,58 @@
+# Docker Compose Cheatsheet with Volumes, Bind Mounts, and Networking
+
+version: '3.8'  # Use Docker Compose file version 3.8
+
+services:
+  frontend:
+    image: nginx:latest  # Using the latest Nginx image as the frontend
+    ports:
+      - "80:80"  # Map TCP port 80 in the container to port 80 on the Docker host
+    volumes:
+      - type: bind
+        source: ./html  # Local directory to be mounted
+        target: /usr/share/nginx/html  # Mount point inside the container
+    networks:
+      - app-network  # Attach the service to the 'app-network'
+
+  backend:
+    image: node:14-alpine  # Using Node.js 14 on Alpine Linux as the backend
+    ports:
+      - "3000:3000"  # Map TCP port 3000 in the container to port 3000 on the Docker host
+    volumes:
+      - type: volume
+        source: backend-data
+        target: /app/data  # Data volume for storing application data
+    depends_on:
+      - db  # Ensures backend starts after db
+    environment:
+      DB_HOST: db  # Environment variable for database host
+    networks:
+      - app-network  # Attach the service to the 'app-network'
+
+  db:
+    image: postgres:13  # Using PostgreSQL version 13
+    environment:
+      POSTGRES_DB: exampledb  # Default database name
+      POSTGRES_USER: user  # Default username
+      POSTGRES_PASSWORD: password  # Default password
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data  # Data volume for storing database data
+    networks:
+      - app-network  # Attach the service to the 'app-network'
+
+volumes:
+  backend-data:  # Named volume for the backend data
+  db-data:  # Named volume for the database data
+
+networks:
+  app-network:  # Custom network to facilitate inter-service communication
+    driver: bridge  # Use the bridge driver
+
+# Notes:
+# - Bind mounts are used for the frontend to serve static HTML files directly from the host.
+# - Volumes are used for the backend and database to ensure data persists across container restarts.
+# - A custom network (app-network) ensures that services can communicate with each other securely.
+# - Environment variables for the db service configure the initial database setup.
+# - The `depends_on` field helps control the order of service startup.
